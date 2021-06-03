@@ -26,7 +26,11 @@ the original image 40 degrees and grey scaling it.
 
 ### From docker image
 
-` docker exec monks-image bash -c "python monks_filter.py -f /tmp/images/input.jpg -g"`
+    `docker pull julietavuan/monks-image:monks-image`
+Run the image with share folder 
+    `docker run --name=monks -v ~/tmp/images:/tmp/images -d julietavuan/monks-image:monks-image`
+Or use Docker desktop and run the image with option and creating the volume
+    `docker exec monks-image bash -c "python monks_filter.py -f /tmp/images/input.jpg -g"`
 
 ### Testing 
 
