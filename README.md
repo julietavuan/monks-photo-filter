@@ -11,9 +11,10 @@ The filters:
 1. `gray_scale` or `g` convert the image to black and white.
 2. `overlay` or `o` overlay a given image on top of the source.
 3. `rotate` or `r` rotate N degrees. (no need for resizing/cropping)
-4. `name` or `n` choose the name of the output file.
-5. `e` or `e` choose the extension of the output file.
-6. `help` or `h` to see the options in command line
+4. `name` or `n` choose the name of the output file. IF miss it would be named as uuid4 string.
+5. `e` or `e` choose the extension of the output file. If miss it would be a jpg file.
+6. `directory` or `d` to choose the directory where to save the outfile. If miss it would be saved in /tmp/images.
+7. `help` or `h` to see the options in command line
 
 ## Example
 
