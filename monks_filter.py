@@ -3,6 +3,7 @@ import argparse
 import logging
 import sys
 import uuid
+from pathlib import Path
 
 from PIL import Image
 
@@ -31,7 +32,7 @@ def overlay(i_overlay, output):
         print("I didn't find the image, are you sure is the right place? ")
         return None, str(file_error)
     except TypeError as type_error:
-        print('Did you send an image and a rotation int?')
+        print('Did you send an image input and a overlay image type?')
         return None, str(type_error)
     except OSError as os_error:
         print('Image format error')
@@ -53,7 +54,7 @@ def rotate(rotation, image):
         print("I didn't find the image, are you sure is the right place? ")
         return None, str(file_error)
     except TypeError as type_error:
-        print('Did you send an image and a rotation int?')
+        print('Did you send an image type and a rotation int?')
         return None, str(type_error)
     except AttributeError as attribute_error:
         print('Did you send an image and a rotation int?')
@@ -72,10 +73,10 @@ def gray_scale(image):
         print("I didn't find the image, are you sure is the right place? " + str(file_error))
         return None, str(file_error)
     except TypeError as type_error:
-        print('Did you send an image and a rotation int?')
+        print('Did you send an image to gray scale it?')
         return None, str(type_error)
     except OSError as os_error:
-        print("You can't ask me to save it in a jpg file, come on" + str(os_error))
+        print("I do not see a file here" + str(os_error))
         return None, str(os_error)
     return output, None
 
@@ -140,39 +141,49 @@ def set_output(arguments, image):
     """
     name = str(uuid.uuid4())
     output_type = "jpg"
-    if arguments.name is not None:
+    directory = "/tmp/images/"
+    if arguments.name is not None and isinstance(arguments.name, str):
         name = arguments.name
-    if arguments.type is not None:
+    if arguments.type is not None and "jpg" in arguments.type or "png" in arguments.type:
         output_type = arguments.type
-    image.convert('RGB').save("/tmp/images/"+name + "." + output_type)
+    if arguments.directory is not None and isinstance(arguments.directory, str):
+        directory = arguments.directory
+    Path(directory).mkdir(parents=True, exist_ok=True)
+    image.convert('RGB').save(directory + name + "." + output_type)
     image.close()
-    return 'OUTPUT: /tmp/images/' + name + "." + output_type
+    return 'OUTPUT:' + directory + name + "." + output_type
 
 
-def create_options():
+def create_parser():
     """
-    Create options
+    Creates the parser with the options for the user
     :return: Parser object
     """
-    parser = argparse.ArgumentParser(description='Process images according to the selected filters')
-    parser.add_argument('-f', '--file', action='store', dest='input',
+    parser_args = argparse.ArgumentParser(description='Process images according to the '
+                                                      'selected filters')
+    parser_args.add_argument('-f', '--file', action='store', dest='input',
                         help='file to change')
-    parser.add_argument("-r", "--rotate", action='store', type=int, dest="num",
+    parser_args.add_argument("-r", "--rotate", action='store', type=int, dest="num",
                         help="rotate an image")
-    parser.add_argument("-o", "--overlay", action='store', dest="filename",
+    parser_args.add_argument("-o", "--overlay", action='store', dest="filename",
                         help="overlying the input image with an a transparent png image")
-    parser.add_argument("-g", "--gray_scale", dest="grayscale", action='store_true',
-                        help="changing to black and white")
-    parser.add_argument("-e", "--extension", dest="type", action='store',
-                        help="choose your type output")
-    parser.add_argument("-n", "--name_output", dest="name", action='store',
-                        help="choose your name output image")
-    return parser
+    parser_args.add_argument("-g", "--gray_scale", dest="grayscale", action='store_true',
+                        help="changing to black and white.")
+    parser_args.add_argument("-e", "--extension", dest="type", action='store',
+                        help="choose your type output. It could be png or jpg")
+    parser_args.add_argument("-n", "--name_output", dest="name", action='store',
+                        help="choose your name output image. "
+                             "If you don't is going to be an uuid4 name")
+    parser_args.add_argument("-d", "--directory", dest="directory", action='store',
+                        help="choose where do you want to send the image. "
+                             "If you don't is going to be in /tmp/images/."
+                             "Please send it with the / at the end")
+    return parser_args
 
 
 if __name__ == '__main__':
     print("Let see what we're going to do")
-    commands = create_options()
+    parser_arguments = create_parser()
     opts = sys.argv[1:]
-    result = monks_filter(commands, opts)
+    result = monks_filter(parser_arguments, opts)
     print(result)

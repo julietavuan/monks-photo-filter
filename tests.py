@@ -2,9 +2,9 @@
 Test for monks filter unittest
 """
 import unittest
+import os
 from PIL import Image
 import monks_filter
-import os
 
 
 class MonkTestCases(unittest.TestCase):
@@ -16,7 +16,7 @@ class MonkTestCases(unittest.TestCase):
         """
         Set up parser
         """
-        self.parser = monks_filter.create_options()
+        self.parser = monks_filter.create_parser()
 
     def test_rotate_wrong_argument(self):
         """
@@ -112,7 +112,6 @@ class MonkTestCases(unittest.TestCase):
         """
         Test errors in monks filter def
         """
-        path = os.path.abspath('input.jpg')
         options = ['-f', "/tmp/images/input.asd", '-g']
         result = monks_filter.monks_filter(self.parser, options=options)
         self.assertEqual("I didn't find your file, are you sure you put the wright path?", result)
@@ -126,23 +125,23 @@ class MonkTestCases(unittest.TestCase):
         result = monks_filter.monks_filter(self.parser, options=options)
         self.assertEqual("Missing argument!", result)
 
-    # def test_multiple_arguments_ok(self):
-    #     """
-    #     Test everything ok in the monks filter def
-    #     """
-    #     path = os.path.abspath('input.jpg')
-    #     options = ['-f', path, '-r', '40', "-n", "hola", "-e", "jpg"]
-    #     result = monks_filter.monks_filter(self.parser, options=options)
-    #     self.assertEqual("OUTPUT: /tmp/images/hola.jpg", result)
-    #
-    # def test_multiple_arguments_png_ok(self):
-    #     """
-    #     Test everything ok in the monks filter def
-    #     """
-    #     path = os.path.abspath('input.jpg')
-    #     options = ['-f', path, '-r', '40', "-n", "hola", "-e", "png"]
-    #     result = monks_filter.monks_filter(self.parser, options=options)
-    #     self.assertEqual("OUTPUT: /tmp/images/hola.png", result)
+    def test_multiple_arguments_ok(self):
+        """
+        Test everything ok in the monks filter def
+        """
+        path = os.path.abspath('input.jpg')
+        options = ['-f', path, '-r', '40', "-n", "hola", "-e", "jpg"]
+        result = monks_filter.monks_filter(self.parser, options=options)
+        self.assertEqual('OUTPUT:/tmp/images/hola.jpg', result)
+
+    def test_multiple_arguments_png_ok(self):
+        """
+        Test everything ok in the monks filter def
+        """
+        path = os.path.abspath('input.jpg')
+        options = ['-f', path, '-r', '40', "-n", "hola", "-e", "png"]
+        result = monks_filter.monks_filter(self.parser, options=options)
+        self.assertEqual('OUTPUT:/tmp/images/hola.png', result)
 
 
 if __name__ == '__main__':
